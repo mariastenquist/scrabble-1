@@ -15,4 +15,43 @@ class Scrabble
       "Y"=>4, "Z"=>10
     }
   end
+
+  def score(word)
+    numbers = word.chars.map do |letter|
+      point_values[letter.capitalize]
+    end
+    numbers.reduce(:+)
+  end
+
+  def score_with_multipliers(word, multipliers, word_bonus=2) #word [1,2,1,1,1] #multipliers[2,2,1,1,1]
+    numbers = word.chars.map.with_index {|letter, index| point_values[letter.capitalize] * multipliers[index]}
+    numbers.reduce(:+) * word_bonus
+  end
+  # scrabble = Scrabble.new
+  # scrabble.score_with_multipliers("hello", [1,2,3,2,1], 2) --given parameters for the code above
+
+  def highest_scoring_word(words)
+    sorted_words = words.sort_by { |word| word.length }
+
+    possibles = sorted_words.group_by { |word| score(word) }.max[1]
+    return possibles.find { |w| w.length == 7 } if possibles.any? { |word| word.length == 7}
+    possibles.first
+  end
+
+  def another_eg_scoring_word(words)
+    result = words.first
+    words.each do |word|
+      if word.length == 7
+        result = word unless result.length == 7 && score(word)
+      else
+      end
+    end
+  end
 end
+
+game = Scrabble.new
+puts game.score('hello')
+puts game.score_with_multipliers("hello", [2,2,2,2,2])
+puts game.score_with_multipliers("hello", [2,2,2,2,2], 2)
+puts game.highest_scoring_word(['hello' 'sound', 'aardwolf'])
+puts game.highest_scoring_word
